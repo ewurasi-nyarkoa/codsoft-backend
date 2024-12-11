@@ -118,12 +118,22 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// Example of protected route
+// Protected route for getting user profile
 app.get('/api/auth/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
-    res.json(user);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      createdAt: user.createdAt
+    });
   } catch (error) {
+    console.error('Profile error:', error);
     res.status(500).json({ error: 'Error fetching profile' });
   }
 });
