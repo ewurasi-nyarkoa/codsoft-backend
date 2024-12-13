@@ -5,7 +5,7 @@ const Job = require('./models/Job'); // Import your Job model
 const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const User = require('./models/User');
+const User = require('./models/user');
 
 app.use(cors()); // Enable CORS for frontend communication
 app.use(express.json());
