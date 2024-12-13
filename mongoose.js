@@ -1,26 +1,29 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-// MongoDB connection URI - replace with your actual database URI
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/job-board';
-
-// Function to connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(MONGODB_URI); // No need for deprecated options
-    console.log('Successfully connected to MongoDB.');
+    console.log('Attempting to connect to MongoDB...');
+    
+    // Check for both possible environment variable names
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    console.log('MongoDB URI defined:', !!mongoUri);
+
+    if (!mongoUri) {
+      throw new Error('MongoDB URI is not defined in environment variables. Check MONGODB_URI or MONGO_URI in .env file');
+    }
+
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 30000,
+    });
+    
+    console.log('Successfully connected to MongoDB Atlas.');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-    process.exit(1); // Exit the app on connection error
+    process.exit(1);
   }
-
-  // Handle disconnection events
-  mongoose.connection.on('disconnected', () => {
-    console.log('MongoDB disconnected');
-  });
-
-  mongoose.connection.on('error', (err) => {
-    console.error('MongoDB connection error:', err);
-  });
 };
 
 module.exports = connectDB;

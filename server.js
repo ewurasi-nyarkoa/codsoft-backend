@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+const mongoose = require('mongoose');
 const connectDB = require('./mongoose');
 const Job = require('./models/Job'); // Import your Job model
 const app = express();
@@ -14,6 +15,15 @@ app.use((req, res, next) => {
   next();
 });
 console.log('JWT_SECRET is set:', !!process.env.JWT_SECRET);
+
+// Add this to your server.js or index.js
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connected to DB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.log('Mongoose connection error:', err);
+});
 
 // Signup route
 app.post('/api/auth/signup', async (req, res) => {
@@ -283,6 +293,18 @@ app.delete('/api/jobs/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB(); // Connect to MongoDB first
+    
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log('MongoDB Connection State:', mongoose.connection.readyState);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
