@@ -8,7 +8,11 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 
-app.use(cors()); // Enable CORS for frontend communication
+// app.use(cors()); // Enable CORS for frontend communication
+app.use(cors({
+  origin: 'http://localhost:3002',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+}));
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -221,7 +225,7 @@ app.get('/api/jobs', async (req, res) => {
   try {
     console.log('Fetching jobs...');
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 100;
     const skip = (page - 1) * limit;
 
     const jobs = await Job.find()
