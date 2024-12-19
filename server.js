@@ -203,15 +203,15 @@ app.patch('/api/auth/profile', authenticateToken, async (req, res) => {
 
 // Create a job
 app.post('/api/jobs', async (req, res) => {
-  const { title, description, company,salary,location,requirements } = req.body;
+  const { title, description, company,salary,location,requirements,type } = req.body;
 
   // Validate required fields
-  if (!title || !description || !company || !salary || !location || !requirements) {
+  if (!title || !description || !company || !salary || !location || !requirements||!type) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    const job = new Job({ title, description, company,salary,location,requirements });
+    const job = new Job({ title, description, company,salary,location,requirements,type });
     await job.save();
     res.status(201).json({ message: 'Job created successfully', job });
   } catch (error) {
@@ -260,11 +260,11 @@ app.get('/api/jobs/:id', async (req, res) => {
 
 // Update a job
 app.patch('/api/jobs/:id', async (req, res) => {
-  const { title, description, company,salary,location,requirements } = req.body;
+  const { title, description, company,salary,location,requirements,type } = req.body;
   try {
     const job = await Job.findByIdAndUpdate(
       req.params.id,
-      { title, description, company,salary,location,requirements },
+      { title, description, company,salary,location,requirements,type },
       { new: true }
     );
     if (!job) return res.status(404).json({ error: 'Job not found' });
