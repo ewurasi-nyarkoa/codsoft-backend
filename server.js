@@ -8,11 +8,11 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 
-// app.use(cors()); // Enable CORS for frontend communication
-app.use(cors({
-  origin: 'http://localhost:3002',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-}));
+app.use(cors()); // Enable CORS for frontend communication
+// app.use(cors({
+//   origin: 'http://localhost:3002',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+// }));
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
